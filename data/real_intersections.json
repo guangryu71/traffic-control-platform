@@ -1,0 +1,122 @@
+[
+    {
+        "id": 1,
+        "name": "车站街与龙泉路交叉口",
+        "traffic_volume": 850,
+        "signal_cycle": 90,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 54,
+        "yellow_time": 5,
+        "red_time": 31
+    },
+    {
+        "id": 2,
+        "name": "车站街与双泉路交叉口",
+        "traffic_volume": 920,
+        "signal_cycle": 80,
+        "peak_hours": [7, 8, 16, 17, 18],
+        "green_time": 48,
+        "yellow_time": 5,
+        "red_time": 27
+    },
+    {
+        "id": 3,
+        "name": "赭山大街与汇泉路交叉口",
+        "traffic_volume": 780,
+        "signal_cycle": 75,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 45,
+        "yellow_time": 5,
+        "red_time": 25
+    },
+    {
+        "id": 4,
+        "name": "眼明泉街与汇泉路交叉口",
+        "traffic_volume": 950,
+        "signal_cycle": 100,
+        "peak_hours": [7, 8, 17, 18, 19],
+        "green_time": 60,
+        "yellow_time": 5,
+        "red_time": 35
+    },
+    {
+        "id": 5,
+        "name": "明堂街与汇泉路交叉口",
+        "traffic_volume": 1100,
+        "signal_cycle": 110,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 66,
+        "yellow_time": 5,
+        "red_time": 39
+    },
+    {
+        "id": 6,
+        "name": "党校街与汇泉路交叉口",
+        "traffic_volume": 820,
+        "signal_cycle": 85,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 51,
+        "yellow_time": 5,
+        "red_time": 29
+    },
+    {
+        "id": 7,
+        "name": "车站街与汇泉路交叉口",
+        "traffic_volume": 760,
+        "signal_cycle": 70,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 42,
+        "yellow_time": 5,
+        "red_time": 23
+    },
+    {
+        "id": 8,
+        "name": "明水大街与汇泉路交叉口",
+        "traffic_volume": 880,
+        "signal_cycle": 95,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 57,
+        "yellow_time": 5,
+        "red_time": 33
+    },
+    {
+        "id": 9,
+        "name": "百脉泉街与汇泉路交叉口",
+        "traffic_volume": 720,
+        "signal_cycle": 65,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 39,
+        "yellow_time": 5,
+        "red_time": 21
+    },
+    {
+        "id": 10,
+        "name": "桃花山街与汇泉路交叉口",
+        "traffic_volume": 980,
+        "signal_cycle": 105,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 63,
+        "yellow_time": 5,
+        "red_time": 37
+    },
+    {
+        "id": 11,
+        "name": "绣水大街与龙泉路交叉口",
+        "traffic_volume": 890,
+        "signal_cycle": 95,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 57,
+        "yellow_time": 5,
+        "red_time": 33
+    },
+    {
+        "id": 12,
+        "name": "车站街与铁道北路交叉口",
+        "traffic_volume": 750,
+        "signal_cycle": 75,
+        "peak_hours": [7, 8, 17, 18],
+        "green_time": 45,
+        "yellow_time": 5,
+        "red_time": 25
+    }
+]

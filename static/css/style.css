@@ -1,0 +1,1441 @@
+body {
+    padding-top: 20px;
+    background-color: #f5f7fa;
+    color: #ffffff;
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #343a40;
+    color: white;
+    font-weight: bold;
+}
+
+/* 确保卡片内容正确布局 */
+.card-body {
+    padding: 1rem;
+    position: relative;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.table th {
+    background-color: #f1f1f1;
+}
+
+/* 聚类结果显示样式 */
+.cluster-results {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.cluster-header {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cluster-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* 聚类图表样式 */
+#clusterChart {
+    margin-top: 20px;
+}
+
+/* 红绿灯时间优化对比的渐变样式 */
+.traffic-light-gradient {
+    background: linear-gradient(90deg, #4CAF50, #FFC107, #F44336);
+    height: 5px;
+    border-radius: 2px;
+}
+
+/* ================================================================= */
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+
+/* 登录页面样式 */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a1f44, #1a3a8f, #3a6fd9);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    /* 确保渐变背景不被覆盖 */
+    z-index: 0;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.tech-bg .circle {
+    background: rgba(58, 111, 217, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tech-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 15%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.circle-2 {
+    width: 300px;
+    height: 300px;
+    bottom: 15%;
+    right: 20%;
+    animation: float 8s ease-in-out infinite;
+}
+
+.circle-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 25%;
+    left: 25%;
+    animation: float 5s ease-in-out infinite;
+}
+
+.circle-4 {
+    width: 250px;
+    height: 250px;
+    top: 60%;
+    right: 10%;
+    animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.login-box {
+    width: 380px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.login-box:hover::before {
+    left: 100%;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+}
+
+.tech-circle {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #4fc3f7;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.login-header p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.login-form .form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.login-form .form-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4fc3f7;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.login-form input:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.login-form input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #4fc3f7;
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background: #3da8d8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-footer a {
+    color: #4fc3f7;
+    text-decoration: none;
+}
+
+.error-message {
+    color: #ff6b6b;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* 主面板样式 */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+}
+
+.tech-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    height: 70px;
+    background: linear-gradient(90deg, #1a237e, #283593);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #ffffff, #feffff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    margin-right: 25px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item i {
+    margin-right: 8px;
+    font-size: 16px;
+    color: #4fc3f7;
+}
+
+.time-display {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #b0bec5;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.user-profile i {
+    font-size: 20px;
+    margin-right: 8px;
+    color: #4fc3f7;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    min-width: 180px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(10px);
+}
+
+.user-profile:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background: #f5f7fa;
+    color: #1a237e;
+}
+
+.dropdown-menu a i {
+    margin-right: 8px;
+    color: #1a237e;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: #f5f7fa;
+    height: 100px;
+}
+
+.main-content h2 {
+    color: #1a237e;
+    margin-bottom: 15px;
+}
+
+.main-content p {
+    color: #546e7a;
+}
+
+
+/* ====================================================== */
+/* 地图容器样式 */
+.map-container {
+    position: relative;
+    overflow: hidden;
+    height: 600px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    touch-action: none;
+}
+
+.map-image {
+    position: absolute;
+    user-select: none;
+    transform-origin: 0 0;
+    max-width: none;
+    cursor: grab;
+}
+
+/* 标记容器 */
+#markersContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform-origin: 0 0;
+}
+
+/* 标记样式 */
+.map-marker {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 10;
+}
+.map-marker img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.map-marker:hover .marker-label {
+    display: block;
+}
+/* 隐藏圆点标记 - 使其完全透明 */
+.map-marker::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: transparent; /* 设置为透明 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1; /* 置于底层 */
+    display: none; /* 完全隐藏 */
+}
+.marker-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight:700px;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    display: none;
+}
+
+/* 控制按钮样式 */
+.map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    display: flex;
+    gap: 5px;
+}
+
+.map-controls .btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+/* 添加上传区域样式 */
+.upload-area {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.upload-area:hover {
+    border-color: #aaa;
+}
+
+#uploadStatus {
+    margin-top: 15px;
+    min-height: 50px;
+}
+/* =================================== */
+    .metric-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        height: 100%;
+    }
+    .metric-card.alert {
+        background: #fff3cd;
+    }
+    .metric-card h6 {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    .metric-card .value {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+    .metric-card small {
+        color: #adb5bd;
+        font-size: 12px;
+    }
+    .analysis-results .card {
+        margin-bottom: 20px;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .analysis-results .card-header {
+        font-weight: 500;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+/* 添加到您的CSS文件中 */
+/* 优化表格样式 */
+.optimization-table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.intersection-name {
+    width: 25%;
+    font-weight: bold;
+    vertical-align: middle;
+    padding-right: 15px;
+}
+
+.line-container {
+    width: 75%;
+    vertical-align: middle;
+}
+
+.line-comparison {
+    position: relative;
+    padding: 15px 0;
+}
+
+.time-line {
+    position: relative;
+    height: 6px;
+    margin: 8px 0;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+.original-line {
+    background:linear-gradient(90deg, #92d9ae, #01891c);
+    box-shadow: 0 1px 2px rgba(0, 255, 255, 0.3);
+}
+
+
+
+.optimized-line {
+    background: linear-gradient(90deg, #f7fb03, #f30606);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+.optimization-table .time-value {
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    color: #333;
+}
+/* 添加线条标签 */
+.time-line::before {
+    content: '';
+    position: absolute;
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: #666;
+}
+
+.change-info {
+    width: 30%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+
+.change-info div {
+    margin: 5px 0;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .intersection-name {
+        width: 30%;
+    }
+    .line-container {
+        width: 70%;
+    }
+    .optimization-table .time-value {
+        right: -30px;
+        font-size: 10px;
+    }
+    .time-line::before {
+        left: -30px;
+        font-size: 9px;
+    }
+}
+.text-success { color: #198754; }
+.text-danger { color: #fbfbfb; }
+.text-warning { color: #ffc107; }
+/* 添加到style.css中 */
+/* 缩小表格样式 */
+.small-table {
+    font-size: 0.8rem;
+}
+
+.small-table .intersection-name {
+    width: 30%;
+    padding-right: 10px;
+}
+
+.small-table .line-container {
+    width: 70%;
+}
+
+.small-table .time-line {
+    height: 3px;
+    margin: 6px 0;
+}
+
+
+.small-table .time-value {
+    font-size: 9px;
+    right: -28px;
+}
+
+.small-table .time-line::before {
+    left: -35px;
+    font-size: 8px;
+}
+
+/* 优化摘要表格样式 */
+.optimization-summary-table {
+    font-size: 0.85rem;
+}
+
+.optimization-summary-table th,
+.optimization-summary-table td {
+    padding: 0.3rem 0.5rem;
+}
+
+.optimization-summary-table th {
+    font-size: 0.8rem;
+}
+/* 为优化结果区域添加滚动条样式 */
+#optimizationResults {
+    scrollbar-width: thin;
+    scrollbar-color: #6e787c #f0f0f0;
+    max-height: 500px !important;
+}
+
+#optimizationResults::-webkit-scrollbar {
+    width: 10px;
+}
+
+#optimizationResults::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 5px;
+}
+
+#optimizationResults::-webkit-scrollbar-thumb {
+    background-color: #00cccc;
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+}
+
+#optimizationResults::-webkit-scrollbar-thumb:hover {
+    background-color: #009999;
+}
+
+
+/* 调整布局（信号灯优化） */
+#optimizationResults {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 18px;
+    background-color: #fff;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+}
+
+/* 统一的时间线条容器 */
+.time-line-container {
+    height: 30px;
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+
+.time-dot:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* 确保聚类分析和信号灯优化区域布局协调 */
+#clusterResults {
+    margin-bottom: 15px;
+}
+
+#optimizationResults {
+    margin-top: 25px;
+    max-height: 880px !important; /* 增加高度 */
+}
+.box7{
+    color: #333;
+    width: auto;
+    height: auto;
+    position: relative;
+    top: -690px;
+
+}
+/* 滤波速度盒子 */
+.container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        
+        .toggle-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .hidden-content {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 20px;
+            display: none; /* 初始状态为隐藏 */
+            animation: fadeIn 0.5s;
+        }
+        
+        .hidden-content.visible {
+            display: block;
+        }
+        
+        /* 绿波速度报告样式 - 紧凑四部分布局 */
+        .green-wave-result {
+           max-height: 900px;
+            padding: 10px;
+        }
+        
+        .green-wave-result h3 {
+            margin-bottom: 15px;
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+        
+        /* 修改网格布局为更紧凑的列宽 */
+        .green-wave-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 150px;
+            column-gap: 12px;
+            max-width: 1550px; /* 限制最大宽度 */
+            margin: 0 auto; /* 居中显示 */
+        }
+        
+        .grid-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            overflow-y: visible;
+            max-height: 450px;
+        }
+        
+        .grid-item h4 {
+            margin: 0 0 12px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        /* 左上：速度表指标 */
+        .speed-indicators {
+            height: 300px;
+            grid-column: 1;
+            grid-row: 1;
+        }
+        
+        .speed-cards-compact {
+            height: 200px;
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+        }
+        
+        .speed-card-compact {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .speed-card-compact:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .speed-card-compact.recommended {
+            border: 2px solid #2ecc71;
+            background: linear-gradient(135deg, #ffffff 0%, #e8f5e9 100%);
+        }
+        
+        .speed-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .speed-value-display {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+        
+        .speedometer {
+            display: block;
+            margin: 0 auto;
+        }
+        
+        /* 右上：时间分析 */
+        .time-analysis {
+            max-height: 375px;
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .time-chart-container-compact {
+            height: 200px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .time-info-compact {
+            margin-top: 10px;
+        }
+        
+        .time-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .time-item.saving {
+            bottom: 25px;
+            position: relative;
+            background: #e8f5e9;
+            border-left: 3px solid #2ecc71;
+        }
+        
+        .time-label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.85rem;
+        }
+        
+        .time-value {
+            color: #666;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        /* 左下：分段速度分析 */
+        .segment-analysis {
+            max-height: 600px;
+            height: 530px;
+            position: relative;
+            bottom: 220px;
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .segment-header-compact {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .segment-chart-container-compact {
+            height: 200px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .segment-list-compact {
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: visible;
+        }
+        
+        .segment-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #3498db;
+            font-size: 0.85rem;
+        }
+        
+        .segment-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .segment-number {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.85rem;
+        }
+        
+        .segment-distance {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .segment-speed {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 0.9rem;
+        }
+        
+        /* 右下：其他信息 */
+        .other-info {
+            bottom: 145px;
+            position: relative;
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .advice-section-compact {
+            flex: 1;
+        }
+        
+        .advice-section-compact h4 {
+            margin-bottom: 8px;
+        }
+        
+        .advice-content {
+            background: #fff9e6;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #f39c12;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .intersections-section-compact {
+            flex: 1;
+            min-height: 120px;
+        }
+        
+        .intersections-section-compact h4 {
+            margin-bottom: 8px;
+        }
+        
+        .intersections-list-compact {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .intersection-item {
+            padding: 6px 8px;
+            margin: 4px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        
+        .intersection-number {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .intersection-position {
+            color: #666;
+        }
+        
+        .metadata-section-compact {
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+            font-size: 0.75rem;
+            color: #999;
+        }
+        
+        /* 滚动条样式 */
+        .segment-list-compact::-webkit-scrollbar,
+        .intersections-list-compact::-webkit-scrollbar,
+        .grid-item::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .segment-list-compact::-webkit-scrollbar-track,
+        .intersections-list-compact::-webkit-scrollbar-track,
+        .grid-item::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .segment-list-compact::-webkit-scrollbar-thumb,
+        .intersections-list-compact::-webkit-scrollbar-thumb,
+        .grid-item::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .segment-list-compact::-webkit-scrollbar-thumb:hover,
+        .intersections-list-compact::-webkit-scrollbar-thumb:hover,
+        .grid-item::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .example-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        /* 结束 */
+/* 交通流量趋势 */
+.col-md-8{
+    height: 700px;
+    position: relative;
+    left: 620px;
+    bottom: 700px;
+    width: 800px;
+}
+/* 定义分析数据环形图折现样式 */
+.chart-container {
+            width: 800px;
+            height: 500px;
+            border: 2px solid #333;
+            background: #f5f5f5;
+            
+        }
+.doughnut-charts p{
+    position: absolute;
+    bottom: 40px;
+    right: 180px;
+}
+
+/* 四个环形图容器样式 */
+#doughnutChartsContainer {
+    bottom: 10px;
+    position: relative;
+    right: 10px;
+    flex: 1; display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    min-width: 400px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0px;
+    padding: 10px;
+}
+
+.doughnut-chart-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.doughnut-chart-item canvas {
+    max-width: 100%;
+    /* height: auto; */
+}
+
+/* 分析结果左侧文字样式 */
+#analysisResults h6 {
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#analysisResults p {
+    color: #333;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+#directionFlows p {
+    color: #555;
+    margin: 6px 0;
+    padding-left: 10px;
+    border-left: 3px solid #009efd;
+}
+/* 停车场建议部分 */
+.progress-container {
+    margin: 10px 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.progress-bar {
+    height: 12px;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.progress-fill.available {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+.progress-fill.limited {
+    background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.progress-fill.full {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+.container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .toggle-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .toggle-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .parking-suggestion-box {
+            position: absolute;
+            top: 60px;
+            right: 1000px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            z-index: 1000;
+            display: none; /* 初始隐藏 */
+            animation: fadeIn 0.5s ease-out;
+            border: 1px solid #e0e0e0;
+            max-width: 400px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .title {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            font-size: 1.5rem;
+        }
+        
+        .suggestion-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            text-align: left;
+            transition: transform 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .suggestion-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .suggestion-details {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .distance-info {
+            color: black;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+        
+        .distance-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .status.available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.limited {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status.full {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .form-label{
+            color: black;
+        }
+        #traffic{
+            top: 100px;
+            position: absolute;
+            display: block;
+            box-sizing: border-box;
+            height: 410.4px;
+            width: 766.4px;
+        }
+        #trafficChart{
+            top: 100px;
+            position: relative;
+            display: block;
+            box-sizing: border-box;
+            height: 382.4px;
+            width: 766.4px;
+        }

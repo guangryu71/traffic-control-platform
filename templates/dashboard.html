@@ -1,0 +1,700 @@
+{% extends "base.html" %}
+
+{% block title %}主面板 - 数据驱动型交通流量管理平台{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+        <!-- 导航栏 -->
+        <nav class="tech-navbar">
+            <div class="nav-left">
+                
+                <div class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <a href="/dashboard/getFenXi" target="_blank" 
+                    style="text-decoration: none; color: inherit; cursor: pointer; display: inline-block; padding: 5px 10px;">
+                        <span>优化记录</span>
+                    </a>
+                </div>
+                
+                <button class="toggle-btn" id="toggleBtn">
+                <i class="fas fa-parking"></i>
+                停车建议
+                </button>
+
+                <a href="/aiTemplate" class="toggle-btn" id="toggleBtn" style="text-decoration: none;bottom: 10px;position: relative;margin: 15px;">
+                AI助手
+                </a>
+
+                <div class="parking-suggestion-box" id="parkingBox">
+                    <!-- 内容由JavaScript动态生成 -->
+                </div>
+
+                <div class="nav-item" id="exportDataBtn" style="position: absolute;left: 1200px; cursor: pointer;">
+                    <i class="fas fa-cog"></i>
+                    <span>导出数据</span>
+                </div>
+                
+            </div>
+            
+            <div class="nav-center">
+                <span class="logo-text" style="font-size:31px;color:white;"><strong>数据驱动型交通流量管理平台</strong></span>
+            </div>
+            
+            <div class="nav-right">
+
+                <div class="user-profile" id="user-profile" style="position: relative;right: 150px;">
+                    <a href="/note">
+                        <span class="profile-name" id="profileName" style="color:white;">笔记本</span>
+                    </a>
+                </div>
+
+                <div class="user-profile" id="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="profile-name" id="profileName">{{ name }}</span>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+                    </div>
+                </div>
+                
+            </div>
+        </nav>
+    
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <h2>欢迎回来, {{ name }}!<p style="font-size: 20px;">文件上传后会自动解析,并自动获取上次上传的历史数据ヾ(•ω•`)o</p></h2>
+            <p style="display:inline;">这里是</p><p style="color:#1a237e;display:inline"><b>数据概览。</b></p>
+            
+            <!-- 数据分析控制台 -->
+            <div class="card mb-4" style="width:600px;">
+                <div class="card-header">
+                    <h5>数据分析控制台</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">上传数据包（含CSV和JSON文件）：</label>
+                        <p style="color:black">文件格式:real_intersections.json,real_traffic_flow.csv</label>
+                        <input class="form-control" type="file" id="dataPackage" accept=".csv,.json" multiple>
+                        <div id="uploadStatus" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+                <div class="col-md-12" style="width:600px; height: 420px;">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5>交通数据分析</h5>
+                        </div>
+                        <div class="card-body" style="display: flex; gap: 20px;">
+                            <div style="flex: 1; min-width: 150px;">
+                                <button id="analyzeBtn" class="btn btn-primary mb-3">执行分析</button>
+                                <!--  在此处显示分析结果  -->
+                                <div id="analysisResults">
+                                    <h6 style="color: rgb(0, 0, 0);">分析结果</h6>
+                                    <p id="totalFlow">总流量: 0 辆</p>
+                                    <p id="avgCongestion">平均拥堵指数: 0</p>
+                                    <div id="directionFlows" style="margin-top: 15px;">
+                                        <p id="northToSouth">由北向南: 0 辆</p>
+                                        <p id="southToNorth">由南向北: 0 辆</p>
+                                        <p id="eastToWest">由东向西: 0 辆</p>
+                                        <p id="westToEast">由西向东: 0 辆</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="doughnutChartsContainer">
+                                <!-- 环形图容器将由JS动态创建 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5>交通流量趋势</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="row mt-4" style="margin-top: 1.5rem !important;position: relative;bottom: 700px;">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5>路口聚类分析</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="clusterNum" class="form-label">聚类数量:</label>
+                                    <input type="number" id="clusterNum" class="form-control" value="3" min="2" max="5">
+                                </div>
+                                <button id="clusterBtn" class="btn btn-primary mb-3">执行聚类</button>
+                                <div id="clusterResults"></div>
+                                <canvas id="clusterChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5>信号灯优化</h5>
+                        
+                            </div>
+                            <div class="card-body">
+                                <button id="optimizeBtn" class="btn btn-primary mb-3">执行优化</button>
+                                <div id="optimizationResults"></div>
+                                <!-- 隐藏图表容器 -->
+                                <div style="display:none;">
+                                    <canvas id="optimizationChartGreen"></canvas>
+                                    <canvas id="optimizationChartRed"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mp-4" style="margin-top: 1.5rem !important;position: relative;bottom: 700px;">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>路口分布地图</h5>
+                            <div class="map-controls">
+                                <button class="btn btn-sm btn-primary" id="zoomInBtn" title="放大">+</button>
+                                <button class="btn btn-sm btn-primary" id="zoomOutBtn" title="缩小">-</button>
+                                <button class="btn btn-sm btn-success" id="addMarkerBtn" title="添加标记">✚</button>
+                                <button class="btn btn-sm btn-danger" id="clearMarkersBtn" title="清除标记">×</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="map-container" id="mapContainer">
+                                <img src="static\images\markers\map.png" class="map-image" id="mapImage" draggable="false">
+                                <div id="markersContainer"></div>
+                            </div>
+                            <div class="mt-3" id="markerEditor" style="display:none;">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="markerLabelInput" placeholder="标记名称">
+                                    <button class="btn btn-primary" id="saveMarkerBtn">保存</button>
+                                    <button class="btn btn-outline-secondary" id="cancelEditBtn">取消</button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box7">
+                <div class="card-header">
+                    <h5>最优滤波速度分析</h5>
+                </div>
+                <div class="container">
+                    <button class="toggle-btn" id="toggleButton">点击显示/隐藏内容</button>
+                    <div class="hidden-content" id="hiddenContent"></div>
+                </div>
+            </div>
+            </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        //右上角个人信息 
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("页面加载完成");
+            // 检查元素是否存在
+            console.log("检查元素:", document.getElementById("fenXiGuan"));
+            const profileName = document.getElementById('profileName');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const userprofile = document.getElementById('user-profile');
+
+            userprofile.addEventListener('click', function(event) {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('active');
+            });
+
+            profileName.addEventListener('click', function(event) {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function() {
+                dropdownMenu.classList.remove('active');
+            });
+        });
+
+// 获取按钮和内容元素
+const toggleButton = document.getElementById('toggleButton');
+const hiddenContent = document.getElementById('hiddenContent');
+
+// 添加点击事件监听器
+toggleButton.addEventListener('click', async function() {
+    // 如果按钮当前显示的是 "点击显示内容"，则发送请求
+    try {
+        // 发送 GET 请求到后端
+        const response = await fetch('/getGreenSpeed');
+
+        // 检查请求是否成功
+        if (!response.ok) {
+            throw new Error(`请求失败，状态码：${response.status}`);
+        }
+
+        // 解析返回的 JSON 数据
+        const data = await response.json();
+        console.log(data);
+        
+        // 显示隐藏内容
+        hiddenContent.classList.add('visible');
+
+        // 更新按钮文本
+        toggleButton.textContent = '最优绿波速度计算';
+        
+        // 解析并显示数据
+        renderGreenWaveData(data);
+        
+    } catch (error) {
+        console.error('请求出错：', error);
+        hiddenContent.textContent = '获取数据失败，请重试。';
+    }
+});
+
+// 渲染绿波速度数据的函数
+function renderGreenWaveData(data) {
+    if (!data || data.status !== 'success') {
+        hiddenContent.innerHTML = '<div class="error">数据获取失败</div>';
+        return;
+    }
+
+    const result = data.data;
+    const metadata = data.metadata;
+    
+    // 创建HTML内容 - 四部分紧凑布局
+    const htmlContent = `
+        <div class="green-wave-result">
+            <h3>交通绿波速度优化报告</h3>
+            <div class="green-wave-grid">
+                <!-- 左上：速度表指标 -->
+                <div class="grid-item speed-indicators">
+                    <h4>速度指标</h4>
+                    <div class="speed-cards-compact">
+                        <div class="speed-card-compact">
+                            <div class="speed-label">基准速度</div>
+                            <canvas class="speedometer" id="baseSpeedometer" width="150" height="120"></canvas>
+                            <div class="speed-value-display">${result.base_speed} ${metadata.units.speed}</div>
+                        </div>
+                        <div class="speed-card-compact">
+                            <div class="speed-label">当前速度</div>
+                            <canvas class="speedometer" id="currentSpeedometer" width="150" height="120"></canvas>
+                            <div class="speed-value-display">${result.current_speed} ${metadata.units.speed}</div>
+                        </div>
+                        <div class="speed-card-compact recommended">
+                            <div class="speed-label">推荐速度</div>
+                            <canvas class="speedometer" id="recommendedSpeedometer" width="150" height="120"></canvas>
+                            <div class="speed-value-display">${result.recommended_speed} ${metadata.units.speed}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右上：时间分析 -->
+                <div class="grid-item time-analysis">
+                    <h4>时间分析</h4>
+                    <div class="time-chart-container-compact">
+                        <canvas id="timeBarChart"></canvas>
+                    </div>
+                    <div class="time-info-compact">
+                        <div class="time-item">
+                            <span class="time-label">总距离:</span>
+                            <span class="time-value">${result.total_distance_km} ${metadata.units.distance_km}</span>
+                        </div>
+                            <span class="time-value" style="position: relative;bottom: 220px;right:115px;">${result.time_analysis.current_time_minutes} ${metadata.units.time}</span>
+                            <span class="time-value" style="position:relative;bottom:220px;right:-110px">${result.time_analysis.optimized_time_minutes} ${metadata.units.time}</span>
+                        ${result.time_analysis.time_saving_minutes > 0 ? `
+                        <div class="time-item saving">
+                            <span class="time-label">预计节省时间:</span>
+                            <span class="time-value">${result.time_analysis.time_saving_minutes} ${metadata.units.time} (${result.time_analysis.time_saving_percentage}%)</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- 左下：分段速度分析 -->
+                <div class="grid-item segment-analysis">
+                    <h4>分段速度分析</h4>
+                    <div class="segment-header-compact">
+                        <span>共 ${result.segment_analysis.segment_count} 个路段</span>
+                        <span>平均速度: ${result.segment_analysis.average_segment_speed} ${metadata.units.speed}</span>
+                    </div>
+                    <div class="segment-chart-container-compact">
+                        <canvas id="segmentLineChart"></canvas>
+                    </div>
+                    <div class="segment-list-compact">
+                        ${result.segment_analysis.segment_speeds.map((speed, index) => `
+                            <div class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-number">路段 ${index + 1}</span>
+                                    <span class="segment-distance">${result.segment_analysis.segment_distances[index]} ${metadata.units.distance}</span>
+                                </div>
+                                <div class="segment-speed">${speed} ${metadata.units.speed}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 右下：其他信息 -->
+                <div class="grid-item other-info">
+                    <!-- 建议 -->
+                    <div class="advice-section-compact">
+                        <h4>驾驶建议</h4>
+                        <div class="advice-content">${result.advice}</div>
+                    </div>
+
+                    <!-- 交叉口信息 -->
+                    <div class="intersections-section-compact">
+                        <h4>交叉口位置</h4>
+                        <div class="intersections-list-compact">
+                            ${result.intersections.map((position, index) => `
+                                <div class="intersection-item">
+                                    <span class="intersection-number">交叉口 ${index + 1}</span>
+                                    <span class="intersection-position">${position} ${metadata.units.distance}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 元数据 -->
+                    <div class="metadata-section-compact">
+                        <small>计算时间: ${new Date(metadata.calculation_timestamp).toLocaleString()}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 将HTML内容添加到隐藏内容区域
+    hiddenContent.innerHTML = htmlContent;
+    
+    // 延迟绘制图表，确保DOM已加载
+    setTimeout(() => {
+        // 绘制速度表
+        drawSpeedometer('baseSpeedometer', result.base_speed, 100,"#1e92f7ff",'#0c30e0ff');
+        drawSpeedometer('currentSpeedometer', result.current_speed, 100,"#f08614ff",'#f63307ff');
+        drawSpeedometer('recommendedSpeedometer', result.recommended_speed, 100,"#24d611ff",'#167f0eff');
+        
+        // 绘制分段速度折线图
+        drawSegmentLineChart(result.segment_analysis, metadata.units);
+        
+        // 绘制时间分析柱状图
+        drawTimeBarChart(result.time_analysis, metadata.units);
+    }, 100);
+}
+
+// 绘制速度表函数
+function drawSpeedometer(canvasId, speed, maxSpeed,color0,color1) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height - 10;
+    const radius = 55; // 减小半径以适应紧凑布局
+    
+    // 清除画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 绘制速度表背景（半圆）
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, Math.PI, 0, false);
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 20;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // 计算速度对应的角度
+    // 速度为0时指向左边(Math.PI)，速度为maxSpeed时指向右边(0)
+    const speedRatio = Math.min(Math.max(speed / maxSpeed, 0), 1); // 确保在0-1之间
+    const angle = Math.PI * (1 + speedRatio); // 从Math.PI(左)到0(右)
+    
+    // 绘制速度指示弧（根据速度值变色）
+    const gradient = ctx.createLinearGradient(
+        centerX - radius, centerY,
+        centerX + radius, centerY
+    );
+    gradient.addColorStop(0, color0);
+    gradient.addColorStop(1, color1);
+    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, Math.PI, angle, false);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 20;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // 绘制刻度（减少刻度数量以适应紧凑布局）
+    for (let i = 0; i <= 5; i++) {
+        const tickRatio = i / 5;
+        const tickAngle = Math.PI * (1 - tickRatio); // 从Math.PI到0
+        const tickStartX = centerX + (radius - 8) * Math.cos(tickAngle);
+        const tickStartY = centerY + (radius - 8) * Math.sin(tickAngle);
+        const tickEndX = centerX + (radius + 3) * Math.cos(tickAngle);
+        const tickEndY = centerY + (radius + 3) * Math.sin(tickAngle);
+        
+        ctx.beginPath();
+        ctx.moveTo(tickStartX, tickStartY);
+        ctx.lineTo(tickEndX, tickEndY);
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 绘制刻度值（只显示主要刻度）
+        const labelX = centerX + (radius - 20) * Math.cos(tickAngle);
+        const labelY = centerY + (radius - 20) * Math.sin(tickAngle);
+        ctx.fillStyle = '#666';
+        ctx.font = '9px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText((i * maxSpeed / 5).toFixed(0), labelX, labelY + 3);
+    }
+    
+    // 绘制指针 - 确保指针正确旋转
+    const pointerLength = radius - 15;
+    // 使用正确的角度计算指针位置
+    const pointerX = centerX + pointerLength * Math.cos(angle);
+    const pointerY = centerY + pointerLength * Math.sin(angle);
+    
+    // 保存上下文状态
+    ctx.save();
+    
+    // 绘制指针（使用更粗的线条使其更明显）
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(pointerX, pointerY);
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // 绘制指针尖端（三角形）
+    ctx.translate(pointerX, pointerY);
+    ctx.rotate(angle + Math.PI / 2); // 指针指向角度
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(-4, 0);
+    ctx.lineTo(4, 0);
+    ctx.closePath();
+    ctx.fillStyle = '#2c3e50';
+    ctx.fill();
+    
+    // 恢复上下文状态
+    ctx.restore();
+    
+    // 绘制中心圆点（覆盖指针起点）
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#2c3e50';
+    ctx.fill();
+    
+    // 绘制中心圆点的白色内圆
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+}
+
+// 绘制分段速度折线图
+function drawSegmentLineChart(segmentAnalysis, units) {
+    const ctx = document.getElementById('segmentLineChart');
+    if (!ctx) return;
+    
+    const labels = segmentAnalysis.segment_speeds.map((_, index) => `路段 ${index + 1}`);
+    const speeds = segmentAnalysis.segment_speeds;
+    const distances = segmentAnalysis.segment_distances;
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `速度 (${units.speed})`,
+                data: speeds,
+                borderColor: 'rgb(52, 152, 219)',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: 'rgb(52, 152, 219)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: '各路段速度变化趋势',
+                    font: {
+                        size: 13
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            const index = context.dataIndex;
+                            return `距离: ${distances[index]} ${units.distance}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: `速度 (${units.speed})`,
+                        font: { size: 11 }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: { size: 10 }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: '路段编号',
+                        font: { size: 11 }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: { size: 10 }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 绘制时间分析柱状图
+function drawTimeBarChart(timeAnalysis, units) {
+    const ctx = document.getElementById('timeBarChart');
+    if (!ctx) return;
+    
+    const labels = ['当前预估时间', '优化预估时间'];
+    const data = [
+        timeAnalysis.current_time_minutes,
+        timeAnalysis.optimized_time_minutes
+    ];
+    
+    // 计算合适的Y轴范围来放大差异
+    const maxDataValue = Math.max(...data);
+    const minDataValue = Math.min(...data);
+    const dataRange = maxDataValue - minDataValue;
+    
+    // 关键：设置较小的Y轴范围来放大视觉差异
+    let yAxisMin, yAxisMax;
+    
+    if (dataRange > 0) {
+        // 当数据有差异时，围绕数据范围设置Y轴
+        yAxisMin = Math.max(0, minDataValue - dataRange * 2.5); // 最小值稍低于最小数据
+        yAxisMax = maxDataValue + dataRange * 2.5; // 最大值稍高于最大数据
+    } else {
+        // 当数据相同时，设置一个合理的默认范围
+        yAxisMin = 0;
+        yAxisMax = maxDataValue * 1.5; // 避免为0的情况
+    }
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `时间 (${units.time})`,
+                data: data,
+                backgroundColor: [
+                    'rgba(91, 87, 86, 0.7)',
+                    'rgba(39, 225, 57, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(60, 59, 59, 1)',
+                    'rgba(46, 204, 113, 1)'
+                ],
+                borderWidth: 2,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: false,
+                    text: '时间对比分析',
+                    font: {
+                        size: 13
+                    }
+                },
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const saving = timeAnalysis.time_saving_minutes;
+                            const savingPercent = timeAnalysis.time_saving_percentage;
+                            let tooltipText = `${context.parsed.y} ${units.time}`;
+                            
+                            if (context.dataIndex === 1 && saving > 0) {
+                                tooltipText += ` (节省 ${saving} ${units.time}, ${savingPercent}%)`;
+                            }
+                            return tooltipText;
+                        }
+                    }
+                },
+                // 在柱子上方显示数据值
+                datalabels: {
+                    display: false,
+                    color: '#000',
+                    anchor: 'end',
+                    align: 'bottom',
+                    formatter: function(value) {
+                        return value + ' ' + units.time;
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    display: false, // 显示Y轴以便看到效果
+                    beginAtZero: false, // 不从0开始，差异更明显
+                    min: yAxisMin,
+                    max: yAxisMax,
+                    grid: {
+                        display: false,
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' ' + units.time;
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="/static/js/main.js"></script>
+{% endblock %}

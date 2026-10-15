@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-header {
+    height:60px;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #ff6b6b;
+}
+
+.success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.error-message {
+    background: #e74c3c;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="tech-circle">
+                <i class="fas fa-atom"></i>
+            </div>
+            <h1 style="color:white;width: 320px;">数据驱动型交通流量管理平台</h1>
+            <p>欢迎登录</p>
+        </div>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        
+        {% if success %}
+        <div class="success-message">{{ success }}</div>
+        {% endif %}
+        
+        <form method="POST" action="/login" class="login-form">
+            <input type="hidden" name="form_type" value="login">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" placeholder="用户名" required>
+            </div>
+            
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="密码" required>
+            </div>
+            
+            <div class="loading" id="loginLoading">
+                <div class="loading-spinner"></div>
+                <p>登录中...</p>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">登 录</button>
+        </form>
+        
+        <div class="login-footer">
+            <p>© 2025 科技管理系统 | <a href="#" id="registerLink">注册</a></p>
+        </div>
+    </div>
+    
+    <!-- 注册弹窗 -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>用户注册</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="registerForm" method="POST" action="/register">
+                <input type="hidden" name="form_type" value="register">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="请输入用户名" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="loading" id="registerLoading">
+                    <div class="loading-spinner"></div>
+                    <p>注册中...</p>
+                </div>
+                
+                <button type="submit" class="register-btn" id="registerBtn">注 册</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="tech-bg">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+        <div class="circle circle-4"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("页面加载完成，开始自动填充账号密码");
+        
+        // 自动填充账号密码
+        const usernameInput = document.querySelector('input[name="username"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+        
+        if (usernameInput && passwordInput) {
+            usernameInput.value = 'admin';
+            passwordInput.value = 'admin123';
+            console.log("账号密码已自动填充");
+        } else {
+            console.error("未找到用户名或密码输入框");
+        }
+        
+    // 注册弹窗功能
+    const modal = document.getElementById('registerModal');
+    const registerLink = document.getElementById('registerLink');
+    const closeBtn = document.querySelector('.close');
+    
+    // 打开弹窗
+    registerLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.style.display = 'block';
+    });
+    
+    // 关闭弹窗
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // 点击弹窗外部关闭
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // 登录表单提交处理
+    const loginForm = document.querySelector('.login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止默认表单提交
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loginLoading');
+            const formData = new FormData(this);
+            
+            // 显示加载状态
+            loginBtn.style.display = 'none';
+            loading.style.display = 'block';
+            
+            fetch('/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { 
+                        throw new Error(err.message || '登录失败'); 
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('登录错误:', error);
+                showMessage(error.message || '网络错误，请重试', 'error');
+            })
+            .finally(() => {
+                loginBtn.style.display = 'block';
+                loading.style.display = 'none';
+            });
+        });
+    }
+    
+    // 注册表单提交处理
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止默认表单提交
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const loading = document.getElementById('registerLoading');
+            const formData = new FormData(this);
+            
+            // 显示加载状态
+            registerBtn.style.display = 'none';
+            loading.style.display = 'block';
+            
+            fetch('/register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { 
+                        throw new Error(err.message || '注册失败'); 
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    // 清空表单
+                    registerForm.reset();
+                    // 3秒后关闭弹窗
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 3000);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('注册错误:', error);
+                showMessage(error.message || '网络错误，请重试', 'error');
+            })
+            .finally(() => {
+                registerBtn.style.display = 'block';
+                loading.style.display = 'none';
+            });
+        });
+    }
+    
+    // 显示消息的函数
+    function showMessage(message, type) {
+        // 移除现有消息
+        const existingMessage = document.querySelector('.dynamic-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // 创建新消息元素
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `dynamic-message ${type}-message`;
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            font-weight: bold;
+            max-width: 300px;
+        `;
+        
+        if (type === 'error') {
+            messageDiv.style.background = '#e74c3c';
+        } else if (type === 'success') {
+            messageDiv.style.background = '#2ecc71';
+        }
+        
+        document.body.appendChild(messageDiv);
+        
+        // 3秒后自动消失
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 3000);
+    }
+});
+// 注册弹窗功能
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('registerModal');
+    const registerLink = document.getElementById('registerLink');
+    const closeBtn = document.querySelector('.close');
+    
+    // 打开弹窗
+    registerLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.style.display = 'block';
+    });
+    
+    // 关闭弹窗
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // 点击弹窗外部关闭
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    
+    
+    
+    // 显示消息的函数
+    function showMessage(message, type) {
+        // 移除现有消息
+        const existingMessage = document.querySelector('.dynamic-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // 创建新消息元素
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `dynamic-message ${type}-message`;
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            font-weight: bold;
+            max-width: 300px;
+        `;
+        
+        if (type === 'error') {
+            messageDiv.style.background = '#e74c3c';
+        } else if (type === 'success') {
+            messageDiv.style.background = '#2ecc71';
+        }
+        
+        document.body.appendChild(messageDiv);
+        
+        // 3秒后自动消失
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交通优化历史记录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            height:2800px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .records-container {
+            position: relative;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        /* 中间时间轴线 */
+        .records-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: linear-gradient(to bottom, #3498db, #2ecc71);
+            transform: translateX(-50%);
+            z-index: 0;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .record-item {
+            display: flex;
+            margin-bottom: -400px;
+            position: relative;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 奇数项在左边 */
+        .record-item:nth-child(odd) {
+            justify-content: flex-start;
+            padding-right: 52%;
+        }
+        
+        /* 偶数项在右边 */
+        .record-item:nth-child(even) {
+            justify-content: flex-end;
+            padding-left: 52%;
+        }
+        
+        .record-card {
+            width: 530px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            width: 45%;
+            max-width: 500px;
+            z-index: 1;
+        }
+        
+        /* 左侧卡片样式 */
+        .record-item:nth-child(odd) .record-card {
+            width: 530px;
+            border-left: 4px solid #3498db;
+        }
+        
+        /* 右侧卡片样式 */
+        .record-item:nth-child(even) .record-card {
+            width: 530px;
+            border-right: 4px solid #2ecc71;
+        }
+        
+        /* 连接点到时间轴的线 - 像走路的步伐 */
+        .record-item::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            height: 2px;
+            z-index: 0;
+            animation: drawLine 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        /* 左侧卡片连接线 - 从卡片右边缘（约45%位置）到时间轴（50%位置） */
+        .record-item:nth-child(odd)::after {
+            right: calc(50% + 2px);
+            left: calc(50% - 48%);
+            background: linear-gradient(to left, rgba(52, 152, 219, 0.6), rgba(52, 152, 219, 0.2));
+            border-top: 1px dashed rgba(52, 152, 219, 0.4);
+        }
+        
+        /* 右侧卡片连接线 - 从时间轴（50%位置）到卡片左边缘（约55%位置） */
+        .record-item:nth-child(even)::after {
+            left: calc(50% + 2px);
+            right: calc(50% - 48%);
+            background: linear-gradient(to right, rgba(46, 204, 113, 0.6), rgba(46, 204, 113, 0.2));
+            border-top: 1px dashed rgba(46, 204, 113, 0.4);
+        }
+        
+        @keyframes drawLine {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* 时间轴上的圆点 */
+        .record-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #3498db;
+            transform: translateX(-50%);
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+        
+        .record-item:nth-child(even)::before {
+            border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+        
+        .record-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 延迟动画，形成走路的效果 */
+        .record-item:nth-child(1) { animation-delay: 0.1s; }
+        .record-item:nth-child(2) { animation-delay: 0.2s; }
+        .record-item:nth-child(3) { animation-delay: 0.3s; }
+        .record-item:nth-child(4) { animation-delay: 0.4s; }
+        .record-item:nth-child(5) { animation-delay: 0.5s; }
+        .record-item:nth-child(6) { animation-delay: 0.6s; }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .record-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+        }
+        
+        .record-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .record-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .metric-card h3 {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .metric-card h3 i {
+            color: #3498db;
+        }
+        
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .metric-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .positive {
+            color: #2ecc71;
+        }
+        
+        .negative {
+            color: #e74c3c;
+        }
+        
+        .traffic-light-optimization {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .traffic-light-optimization h3 {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .traffic-light-optimization h3 i {
+            color: #e74c3c;
+        }
+        
+        .light-comparison {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .light-phase {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .light-phase h4 {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .light-values {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .light-value {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .light-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .light-time {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .original {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .optimized {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .change-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .green-wave {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .green-wave h3 {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .green-wave h3 i {
+            color: #f39c12;
+        }
+        
+        .wave-speed {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .speed-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .speed-unit {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        .speed-description {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .stats-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        footer {
+            position:relative;
+            top:500px;
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .time-display {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .records-container::before {
+                left: 20px;
+            }
+            
+            .record-item {
+                padding-left: 60px !important;
+                padding-right: 0 !important;
+                justify-content: flex-start !important;
+            }
+            
+            .record-item::before {
+                left: 20px;
+            }
+            
+            .record-item::after {
+                left: 20px !important;
+                right: auto !important;
+                width: 2px !important;
+            }
+            
+            .record-card {
+                width: 530px !important;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>交通优化历史记录</h1>
+        </header>
+        
+        <div class="time-display" id="current-time">
+            <!-- 当前时间将通过JavaScript动态显示 -->
+        </div>
+        
+        <div class="records-container" id="records-container">
+            <!-- 记录将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer>
+            <p>交通优化历史记录系统 &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // 更新当前时间
+        function updateCurrentTime() {
+            const now = new Date();
+            const formattedTime = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('current-time').textContent = `当前时间: ${formattedTime}`;
+        }
+        
+        // 初始化时间显示
+        updateCurrentTime();
+        // 每秒更新一次时间
+        setInterval(updateCurrentTime, 1000);
+        
+        // 交通优化记录数据
+        const trafficRecords = [
+            {
+                title: "车站街与龙泉路交叉口",
+                date: "2025-10-15",
+                trafficFlow: { value: "1,250", change: 8.7 },
+                waitTime: { value: "38", change: -22.4 },
+                lightOptimization: {
+                    northSouth: { original: 45, optimized: 55 },
+                    eastWest: { original: 60, optimized: 50 }
+                },
+                greenWaveSpeed: 45,
+                greenWaveDescription: "在此速度下，车辆可连续通过3个路口无需停车",
+                stats: {
+                    efficiency: 92,
+                    congestionRelief: 15,
+                    userRating: 4.2
+                }
+            },
+            {
+                title: "车站街与双泉路交叉口",
+                date: "2025-09-28",
+                trafficFlow: { value: "980", change: 5.2 },
+                waitTime: { value: "42", change: -18.6 },
+                lightOptimization: {
+                    northSouth: { original: 50, optimized: 60 },
+                    eastWest: { original: 55, optimized: 45 }
+                },
+                greenWaveSpeed: 50,
+                greenWaveDescription: "在此速度下，车辆可连续通过4个路口无需停车",
+                stats: {
+                    efficiency: 88,
+                    congestionRelief: 12,
+                    userRating: 4.0
+                }
+            },
+            {
+                title: "赭山大街与汇泉路交叉口",
+                date: "2025-08-10",
+                trafficFlow: { value: "1,520", change: 12.3 },
+                waitTime: { value: "35", change: -25.5 },
+                lightOptimization: {
+                    northSouth: { original: 40, optimized: 50 },
+                    eastWest: { original: 65, optimized: 55 }
+                },
+                greenWaveSpeed: 40,
+                greenWaveDescription: "在此速度下，车辆可连续通过5个路口无需停车",
+                stats: {
+                    efficiency: 95,
+                    congestionRelief: 20,
+                    userRating: 4.5
+                }
+            },
+            {
+                title: "眼明泉街与汇泉路交叉口",
+                date: "2025-07-22",
+                trafficFlow: { value: "1,120", change: 7.5 },
+                waitTime: { value: "40", change: -20.0 },
+                lightOptimization: {
+                    northSouth: { original: 55, optimized: 65 },
+                    eastWest: { original: 50, optimized: 40 }
+                },
+                greenWaveSpeed: 48,
+                greenWaveDescription: "在此速度下，车辆可连续通过3个路口无需停车",
+                stats: {
+                    efficiency: 90,
+                    congestionRelief: 16,
+                    userRating: 4.3
+                }
+            }
+        ];
+        
+        // 生成记录卡片
+        function generateRecordCards() {
+            const container = document.getElementById('records-container');
+            
+            trafficRecords.forEach((record, index) => {
+                // 创建记录项容器
+                const recordItem = document.createElement('div');
+                recordItem.className = 'record-item';
+                
+                const card = document.createElement('div');
+                card.className = 'record-card';
+                
+                card.innerHTML = `
+                    <div class="record-header">
+                        <h2 class="record-title">${record.title}</h2>
+                        <div class="record-date">${record.date}</div>
+                    </div>
+                    
+                    <div class="record-content">
+                        <div class="metric-card">
+                            <h3><i class="fas fa-car"></i> 平均交通流量</h3>
+                            <div class="metric-value">${record.trafficFlow.value} 辆/小时</div>
+                            <div class="metric-change ${record.trafficFlow.change > 0 ? 'positive' : 'negative'}">
+                                <i class="fas fa-${record.trafficFlow.change > 0 ? 'arrow-up' : 'arrow-down'}"></i> 
+                                相比优化前${record.trafficFlow.change > 0 ? '增加' : '减少'} ${Math.abs(record.trafficFlow.change)}%
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h3><i class="fas fa-clock"></i> 平均等待时间</h3>
+                            <div class="metric-value">${record.waitTime.value} 秒</div>
+                            <div class="metric-change ${record.waitTime.change > 0 ? 'positive' : 'negative'}">
+                                <i class="fas fa-${record.waitTime.change > 0 ? 'arrow-up' : 'arrow-down'}"></i> 
+                                相比优化前${record.waitTime.change > 0 ? '增加' : '减少'} ${Math.abs(record.waitTime.change)}%
+                            </div>
+                        </div>
+                        
+                        <div class="traffic-light-optimization">
+                            <h3><i class="fas fa-traffic-light"></i> 红绿灯时间优化</h3>
+                            <div class="light-comparison">
+                                <div class="light-phase">
+                                    <h4>南北方向</h4>
+                                    <div class="light-values">
+                                        <div class="light-value">
+                                            <div class="light-label">优化前</div>
+                                            <div class="light-time original">${record.lightOptimization.northSouth.original}秒</div>
+                                        </div>
+                                        <div class="light-value">
+                                            <div class="light-label">优化后</div>
+                                            <div class="light-time optimized">${record.lightOptimization.northSouth.optimized}秒</div>
+                                        </div>
+                                    </div>
+                                    <div class="change-indicator positive">
+                                        <i class="fas fa-arrow-up"></i> 增加${record.lightOptimization.northSouth.optimized - record.lightOptimization.northSouth.original}秒
+                                    </div>
+                                </div>
+                                
+                                <div class="light-phase">
+                                    <h4>东西方向</h4>
+                                    <div class="light-values">
+                                        <div class="light-value">
+                                            <div class="light-label">优化前</div>
+                                            <div class="light-time original">${record.lightOptimization.eastWest.original}秒</div>
+                                        </div>
+                                        <div class="light-value">
+                                            <div class="light-label">优化后</div>
+                                            <div class="light-time optimized">${record.lightOptimization.eastWest.optimized}秒</div>
+                                        </div>
+                                    </div>
+                                    <div class="change-indicator positive">
+                                        <i class="fas fa-arrow-down"></i> 减少${record.lightOptimization.eastWest.original - record.lightOptimization.eastWest.optimized}秒
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="green-wave">
+                            <h3><i class="fas fa-wave-square"></i> 最优绿波速度</h3>
+                            <div class="wave-speed">
+                                <div class="speed-value">${record.greenWaveSpeed}</div>
+                                <div class="speed-unit">公里/小时</div>
+                            </div>
+                            <div class="speed-description">
+                                ${record.greenWaveDescription}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-summary">
+                        <div class="stat-item">
+                            <div class="stat-value">${record.stats.efficiency}%</div>
+                            <div class="stat-label">通行效率</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${record.stats.congestionRelief}%</div>
+                            <div class="stat-label">拥堵缓解</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${record.stats.userRating}</div>
+                            <div class="stat-label">用户评分</div>
+                        </div>
+                    </div>
+                `;
+                
+                recordItem.appendChild(card);
+                container.appendChild(recordItem);
+            });
+        }
+        
+        // 初始化生成记录卡片
+        document.addEventListener('DOMContentLoaded', generateRecordCards);
+    </script>
+</body>
+</html>
